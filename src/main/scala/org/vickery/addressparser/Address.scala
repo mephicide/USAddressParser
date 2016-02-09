@@ -76,8 +76,15 @@ case class Address(val streetNum: Option[String],
   def canonicalStreetType = {
     if(streetName.isDefined && !(streetName.get.isEmpty) && streetType.isDefined && (streetName.get contains streetType.get))
       ""
-    else
-      streetTypeMapping.getOrElse(streetType.getOrElse("").toUpperCase, "").toLowerCase.capitalize
+    else {
+      if(streetType.isDefined && streetType.get.equalsIgnoreCase("po box")) {
+        "PO Box"
+      }
+      else {
+        streetTypeMapping.getOrElse(streetType.getOrElse("").toUpperCase, "").toLowerCase.capitalize
+      }
+    }
+
   }
 
   def masterAddressName = {
@@ -246,6 +253,7 @@ case class Address(val streetNum: Option[String],
     "HILLS" -> "HLS", "HLS" -> "HLS", "HLS" -> "HLS",
     "HLLW" -> "HOLW", "HOLLOW" -> "HOLW", "HOLLOWS" -> "HOLW", "HOLW" -> "HOLW", "HOLWS" -> "HOLW", "HOLW" -> "HOLW",
     "INLT" -> "INLT", "INLT" -> "INLT",
+    "INTERSTATE" -> "INTERSTATE",
     "IS" -> "IS", "ISLAND" -> "IS", "ISLND" -> "IS", "IS" -> "IS",
     "ISLANDS" -> "ISS", "ISLNDS" -> "ISS", "ISS" -> "ISS", "ISS" -> "ISS",
     "ISLE" -> "ISLE", "ISLES" -> "ISLE", "ISLE" -> "ISLE",

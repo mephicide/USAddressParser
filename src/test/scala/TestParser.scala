@@ -367,6 +367,22 @@ class TestParser extends FlatSpec with Matchers
       None)))
   }
 
+  "84 Po Box" should "be parsed" in {
+    val addressToParse = "84 Po Box "
+    completeParser.parseWithKnownCityStateZip(addressToParse) should be (Some(new Address(Some("84"),
+      None,
+      None,
+      Some("PO Box"),
+      None,
+      None,
+      optCity,
+      optState,
+      optZip,
+      None)))
+
+    completeParser.parseWithKnownCityStateZip(addressToParse).get.canonicalStreetType should be ("PO Box")
+  }
+
   "28 ROUTE 39" should "be parsed" in {
     val addressToParse = "28 ROUTE 39 "
     completeParser.parseWithKnownCityStateZip(addressToParse) should be (Some(new Address(Some("28"),
@@ -397,6 +413,23 @@ class TestParser extends FlatSpec with Matchers
       Some("183"))))
 
     completeParser.parseWithKnownCityStateZip(addressToParse).get.canonicalHighWayNumber should be ("183")
+  }
+
+  "6425 S Interstate 35 Ste 105" should "be parsed" in {
+    val addressToParse = "6425 S Interstate 35 Ste 105"
+    completeParser.parseWithKnownCityStateZip(addressToParse) should be (Some(new Address(Some("6425"),
+      Some("ste 105"),
+      None,
+      Some("interstate"),
+      Some("s"),
+      None,
+      optCity,
+      optState,
+      optZip,
+      Some("35"))))
+
+    completeParser.parseWithKnownCityStateZip(addressToParse).get.canonicalHighWayNumber should be ("35")
+    completeParser.parseWithKnownCityStateZip(addressToParse).get.canonicalStreetType should be ("Interstate")
   }
 
   "647 W OLD US HIGHWAY 90" should "be parsed" in {
