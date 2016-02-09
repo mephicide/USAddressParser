@@ -29,18 +29,18 @@ case class Address(val streetNum: Option[String],
   def withPostDirection(newPost: String) = new Address(streetNum, internalNumber, streetName, streetType, preDirection, Some(newPost), city, state, zip, highwayNumber)
   def withCity(newCity: String) = new Address(streetNum, internalNumber, streetName, streetType, preDirection, postDirection, Some(newCity), state, zip, highwayNumber)
   def withState(newState: String) = new Address(streetNum, internalNumber, streetName, streetType, preDirection, postDirection, city, Some(newState), zip, highwayNumber)
-  def withZip(newZip: Integer) = new Address(streetNum, internalNumber, streetName, streetType, preDirection, postDirection, city, state, Some(newZip), highwayNumber)
+  def withZip(newZip: Integer) = new Address(streetNum, internalNumber, streetName, streetType, preDirection, postDirection, city, state, if(newZip == -1) None else Some(newZip), highwayNumber)
 
   override def toString = "Num(" + streetNum.getOrElse("") + ") " +
-    "PreDir(" + preDirection.getOrElse("") + ") " +
-    "Name(" + streetName.getOrElse("") + ") " +
-    "Type(" + streetType.getOrElse("") + ") " +
-    "HWY(" + highwayNumber.getOrElse("") + ") " +
-    "PostDir(" + postDirection.getOrElse("") + ") " +
-    "Secondary(" + internalNumber.getOrElse("") + ") " +
-    "City(" + city.getOrElse("") + ") " +
-    "State(" + state.getOrElse("") + ") " +
-    "Zip(" + zip.getOrElse("") + ")"
+    "PreDir(" + preDirection.getOrElse("null") + ") " +
+    "Name(" + streetName.getOrElse("null") + ") " +
+    "Type(" + streetType.getOrElse("null") + ") " +
+    "HWY(" + highwayNumber.getOrElse("null") + ") " +
+    "PostDir(" + postDirection.getOrElse("null") + ") " +
+    "Secondary(" + internalNumber.getOrElse("null") + ") " +
+    "City(" + city.getOrElse("null") + ") " +
+    "State(" + state.getOrElse("null") + ") " +
+    "Zip(" + zip.getOrElse("null") + ")"
 
   def canonicalStreetNumber = streetNum.get
 
@@ -52,7 +52,7 @@ case class Address(val streetNum: Option[String],
   def canonicalPreDirection = canonicalDirection(preDirection)
 
   def canonicalName(name: Option[String]) = {
-    name.getOrElse("").split("""\s""").filter(!_.isEmpty).map(_.capitalize).mkString(" ")
+    name.getOrElse("").split("""\s""").filter(!_.isEmpty).map(_.toLowerCase.capitalize).mkString(" ")
   }
 
   def canonicalStreetName = {
@@ -74,16 +74,36 @@ case class Address(val streetNum: Option[String],
       almost
   }
   def canonicalStreetType = {
-    if(streetName.isDefined && streetType.isDefined && (streetName.get contains streetType.get))
+    if(streetName.isDefined && !(streetName.get.isEmpty) && streetType.isDefined && (streetName.get contains streetType.get))
       ""
     else
-      streetTypeMapping.getOrElse(streetType.getOrElse("").toUpperCase, "")
+      streetTypeMapping.getOrElse(streetType.getOrElse("").toUpperCase, "").toLowerCase.capitalize
+  }
+
+  def masterAddressName = {
+    canonicalStreetNumber + " " +
+      (if(canonicalPreDirection.isEmpty) "" else canonicalPreDirection + " ") +
+      (if(canonicalStreetName.isEmpty) "" else canonicalStreetName + " ") +
+      (if(canonicalStreetType.isEmpty) "" else canonicalStreetType + " ") +
+      (if(canonicalHighWayNumber.isEmpty) "" else canonicalHighWayNumber + " ") +
+      (if(canonicalPostDirection.isEmpty) "" else canonicalPostDirection + " ") +
+      canonicalCity + " " + canonicalState + " " + canonicalZip
   }
 
   def canonicalPostDirection = canonicalDirection(postDirection)
   def canonicalHighWayNumber = {
-    if(highwayNumber.isDefined)
-      highwayNumber.get.split("\\s")(1)
+    if(highwayNumber.isDefined) {
+      val num = highwayNumber.get
+      val splits = num.split("\\s+")
+      if(splits.length>0) {
+        if(splits.length==2)
+          splits(1)
+        else
+          splits(0)
+      }
+      else
+        ""
+    }
     else
       ""
   }
@@ -108,7 +128,16 @@ case class Address(val streetNum: Option[String],
     stateMapping.getOrElse(state.getOrElse("").toLowerCase, "")
   }
 
-  def canonicalZip = zip.get
+  def canonicalZip: String = {
+    val almost: Integer = zip.getOrElse(-1)
+
+    if(almost == -1)
+      ""
+    else if(almost < 10000)
+      "0" + almost
+    else
+      ""+almost
+  }
 
   def toCanonicalString = canonicalStreetNumber + " " +
                           (if(canonicalPreDirection.isEmpty) "" else (canonicalPreDirection + " ")) +
