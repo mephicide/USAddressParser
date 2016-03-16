@@ -1,49 +1,73 @@
 package org.vickery.addressparser
 
-import scala.util.parsing.combinator.RegexParsers
+import fastparse.Utils._
+import fastparse.core.ParseCtx
+import fastparse.core.Parsed.Success
+
+//import fastparse.core.{ParseCtx, Parser}
 
 /**
  * 123 S main st. town state
  * Created by vickery on 9/17/15.
  */
-class AddressParser(val city: Option[String], val state: Option[String], val zip: Option[Integer], val ignoreEverythingPriorToPostDirMode: Boolean = false) extends RegexParsers{
+class AddressParser(val city: Option[String], val state: Option[String], val zip: Option[Integer], val ignoreEverythingPriorToPostDirMode: Boolean = false){
 
-  override val skipWhitespace = false
-  override val whiteSpace = """[ \t\n\r,.]""".r
+  import fastparse.all._
 
-  def fractionalNumber: Parser[String] = """[0-9]+/[0-9]+""".r
+  //override val skipWhitespace = false
+  val whiteSpace = CharIn(List('\t', '\n', ' ')).rep
 
-  def standaloneStreetNumber: Parser[String] = punctuatedNumber | individualNumber
+  val fractionalNumber: Parser[String] = P(individualNumber ~ "/" ~ individualNumber) map {case (s1, s2) => s1 + "/" + s2}
 
-  def completeStreetNumber: Parser[String] = (individualNumber~fractionalNumber | standaloneStreetNumber) ^^ {
-    case indiv~frac => indiv + " " + frac
-    case standalone: String => standalone
+  val standaloneStreetNumber: Parser[String] = P(punctuatedNumber | individualNumber)
+
+  val completeStreetNumber: Parser[String] = P(((individualNumber~whiteSpace~fractionalNumber) map { case (s1,s2) => s1 + s2 }) | standaloneStreetNumber)
+
+  val punctuatedNumber: Parser[String] = (P(individualNumber ~ "." ~ individualNumber) map {case(s1,s2) => s1+"."+s2}) |
+                                          (P(individualNumber ~ "-" ~ individualNumber ~ CharIn('a'to'z', 'A'to'Z').rep(1).?.!) map {case (s1, s2, s3) => s1+"-"+s2+s3}) |
+                                          (P(individualNumber ~ "-" ~ CharIn('a'to'z', 'A'to'Z').rep(1).!) map {case (s1,s2) => s1+ "-" +s2}) |
+                                          (P(individualNumber ~ CharIn('a'to'z', 'A'to'Z', '0'to'9').rep(1).!) map {case(s1,s2) => s1+s2}) |
+                                          (P(CharIn('a'to'z', 'A'to'Z').! ~ individualNumber ~ CharIn('a'to'z', 'A'to'Z', '0'to'9').rep(1).!) map {case (s1,s2,s3) => s1+s2+s3})
+
+  val individualNumber: Parser[String] = P(CharIn('0'to'9').rep(1).!)
+
+  val directionality: Parser[String] =  P(multiDirectional | singleDirectional)
+
+  case class StringInIgnoreCase(strings: String*) extends Parser[Unit]{
+
+    private[this] val trie = new TrieNode(strings.map(_.toLowerCase))
+
+    def parseRec(cfg: ParseCtx, index: Int) = {
+      val length = trie.query(cfg.input.toLowerCase, index)
+      if (length != -1) success(cfg.success, (), index + length + 1, Set.empty, false)
+      else fail(cfg.failure, index)
+    }
+    override def toString = {
+      s"StringIn(${strings.map(literalize(_)).mkString(", ")})"
+    }
   }
 
-  def punctuatedNumber: Parser[String] = """[0-9]+\.[0-9]+|[0-9]+\-[0-9]+[a-zA-Z]?|[0-9]+\-[a-zA-Z]|[0-9]+[a-zA-Z0-9]+|[a-zA-Z][0-9]+[a-zA-Z0-9]+""".r
-  def individualNumber: Parser[String] = """[0-9]+""".r
+  val singleDirectional: Parser[String] = P(StringInIgnoreCase("North","South","East","West","N","E","S","W").!)
 
-  def directionality: Parser[String] =  multiDirectional | singleDirectional
+  val multiDirectional: Parser[String] = StringInIgnoreCase("NE","NW","SE","SW","Northeast","Northwest","Southeast","Southwest").!
 
-  def singleDirectional: Parser[String] = """(?i)(North|South|East|West|N|E|S|W)""".r
-
-  def multiDirectional: Parser[String] = """(?i)(NE|NW|SE|SW|Northeast|Northwest|Southeast|Southwest)""".r
-
-  def streetName: Parser[String] = log(rep1sep(log(not(streetType) ~> regularName)("notStreetRegName"), whiteSpace))("repeatedName") <~ log(streetType)("ignoredType") ^^ {
-    case matched: List[String] => matched.mkString(" ")
+  val streetName: Parser[String] = P(!streetType ~ regularName).rep(1, whiteSpace) ~ whiteSpace ~ streetType map {
+    case (ss, s) => ss.mkString(" ") + " " + s
   }
 
-  def streetType: Parser[String] = """(?i)((ALLEE|ALLEY|ALLY|ALY|ANEX|ANNEX|ANNX|ANX|ARCADE|ARC|AVENUE|AVENU|AVEN|AVE|AVNUE|AVN|AV|BAYOO|BAYOU|BCH|BEACH|BEND|BGS|BG|BLFS|BLF|BLUFFS|BLUFF|BLUF|BLVD|BND|BOTTM|BOTTOM|BOT|BOULEVARD|BOULV|BOUL|BRANCH|BRDGE|BRG|BRIDGE|BRKS|BRK|BRNCH|BROOKS|BROOK|BR|BTM|BURGS|BURG|BYPASS|BYPAS|BYPA|BYPS|BYP|BYU|CAMP|CANYN|CANYON|CAPE|CAUSEWAY|CAUSWA|CENTERS|CENTER|CENTRE|CENTR|CENT|CEN|CIRCLES|CIRCLE|CIRCL|CIRC|CIRS|CIR|CLB|CLFS|CLF|CLIFFS|CLIFF|CLUB|CMNS|CMN|CMP|CNTER|CNTR|CNYN|COMMONS|COMMON|CORNERS|CORNER|CORS|COR|COURSE|COURTS|COURT|COVES|COVE|CPE|CP|CRCLE|CRCL|CREEK|CRESCENT|CREST|CRES|CRK|CROSSING|CROSSROADS|CROSSROAD|CRSENT|CRSE|CRSNT|CRSSNG|CRST|CSWY|CTRS|CTR|CTS|CT|CURVE|CURV|CVS|CV|CYN|DALE|DAM|DIVIDE|DIV|DL|DM|DRIVES|DRIVE|DRIV|DRS|DRV|DR|DVD|DV|ESTATES|ESTATE|ESTS|EST|EXPRESSWAY|EXPRESS|EXPR|EXPW|EXPY|EXP|EXTENSIONS|EXTENSION|EXTNSN|EXTN|EXTS|EXT|FALLS|FALL|FERRY|FIELDS|FIELD|FLATS|FLAT|FLDS|FLD|FLS|FLTS|FLT|FORDS|FORD|FORESTS|FOREST|FORGES|FORGE|FORG|FORKS|FORK|FORT|FRDS|FRD|FREEWAY|FREEWY|FRGS|FRG|FRKS|FRK|FRRY|FRST|FRT|FRWAY|FRWY|FRY|FT|FWY|GARDENS|GARDEN|GARDN|GATEWAY|GATEWY|GATWAY|GDNS|GDN|GLENS|GLEN|GLNS|GLN|GRDEN|GRDNS|GRDN|GREENS|GREEN|GRNS|GRN|GROVES|GROVE|GROV|GRVS|GRV|GTWAY|GTWY|HARBORS|HARBOR|HARBR|HARB|HAVEN|HBRS|HBR|HEIGHTS|HIGHWAY|HIGHWY|HILLS|HILL|HIWAY|HIWY|HLLW|HLS|HL|HOLLOWS|HOLLOW|HOLWS|HOLW|HRBOR|HTS|HT|HVN|HWAY|HWY|INLET|INLT|INTERSTATE|ISLANDS|ISLAND|ISLES|ISLE|ISLNDS|ISLND|ISS|IS|JCTION|JCTNS|JCTN|JCTS|JCT|JUNCTIONS|JUNCTION|JUNCTN|JUNCTON|KEYS|KEY|KNLS|KNL|KNOLLS|KNOLL|KNOL|KYS|KY|LAKES|LAKE|LANDING|LAND|LANE|LCKS|LCK|LDGE|LDG|LF|LGTS|LGT|LIGHTS|LIGHT|LKS|LK|LNDG|LNDNG|LN|LOAF|LOCKS|LOCK|LODGE|LODG|LOOPS|LOOP|MALL|MANORS|MANOR|MDWS|MDW|MEADOWS|MEADOW|MEDOWS|MEWS|MILLS|MILL|MISSION|MISSN|MLS|ML|MNRS|MNR|MNTAIN|MNTNS|MNTN|MNT|MOTORWAY|MOUNTAINS|MOUNTAIN|MOUNTIN|MOUNT|MSN|MSSN|MTIN|MTNS|MTN|MTWY|MT|NCK|NECK|OPAS|ORCHARD|ORCHRD|ORCH|OVAL|OVERPASS|OVL|PARKS|PARKWAYS|PARKWAY|PARKWY|PARK|PASSAGE|PASS|PATHS|PATH|PIKES|PIKE|PINES|PINE|PKWAY|PKWYS|PKWY|PKY|PLACE|PLAINS|PLAIN|PLAZA|PLNS|PLN|PLZA|PLZ|PL|PNES|PNE|POINTS|POINT|PORTS|PORT|PRAIRIE|PRK|PRR|PRTS|PRT|PR|PSGE|PTS|PT|RADIAL|RADIEL|RADL|RAD|RAMP|RANCHES|RANCH|RAPIDS|RAPID|RDGE|RDGS|RDG|RDS|RD|REST|RIDGES|RIDGE|RIVER|RIVR|RIV|RNCHS|RNCH|ROADS|ROAD|ROUTE|ROW|RPDS|RPD|RST|RTE|RUE|RUN|RVR|SHLS|SHL|SHOALS|SHOAL|SHOARS|SHOAR|SHORES|SHORE|SHRS|SHR|SKWY|SKYWAY|SMT|SPGS|SPG|SPNGS|SPNG|SPRINGS|SPRING|SPRNGS|SPRNG|SPURS|SPUR|SQRE|SQRS|SQR|SQS|SQUARES|SQUARE|SQU|SQ|STATION|STATN|STA|STN|STRAVENUE|STRAVEN|STRAVN|STRAV|STRA|STREAM|STREETS|STREET|STREME|STRM|STRT|STRVNUE|STRVN|STR|STS|ST|SUMITT|SUMIT|SUMMIT|TERRACE|TERR|TER|THROUGHWAY|TPKE|TRACES|TRACE|TRACKS|TRACK|TRAFFICWAY|TRAILER|TRAILS|TRAIL|TRAK|TRCE|TRFY|TRKS|TRK|TRLRS|TRLR|TRLS|TRL|TRNPK|TRWY|TUNEL|TUNLS|TUNL|TUNNELS|TUNNEL|TUNNL|TURNPIKE|TURNPK|UNDERPASS|UNIONS|UNION|UNS|UN|UPAS|VALLEYS|VALLEY|VALLY|VDCT|VIADCT|VIADUCT|VIA|VIEWS|VIEW|VILLAGES|VILLAGE|VILLAG|VILLE|VILLG|VILLIAGE|VILL|VISTA|VIST|VIS|VLGS|VLG|VLLY|VLYS|VLY|VL|VSTA|VST|VWS|VW|WALKS|WALK|WALL|WAYS|WAY|WELLS|WELL|WLS|WL|WY|XING|XRDS|XRD))""".r
+  val streetType: Parser[String] = StringInIgnoreCase("ALLEE","ALLEY","ALLY","ALY","ANEX","ANNEX","ANNX","ANX","ARCADE","ARC","AVENUE","AVENU","AVEN","AVE","AVNUE","AVN","AV","BAYOO","BAYOU","BCH","BEACH","BEND","BGS","BG","BLFS","BLF","BLUFFS","BLUFF","BLUF","BLVD","BND","BOTTM","BOTTOM","BOT","BOULEVARD","BOULV","BOUL","BRANCH","BRDGE","BRG","BRIDGE","BRKS","BRK","BRNCH","BROOKS","BROOK","BR","BTM","BURGS","BURG","BYPASS","BYPAS","BYPA","BYPS","BYP","BYU","CAMP","CANYN","CANYON","CAPE","CAUSEWAY","CAUSWA","CENTERS","CENTER","CENTRE","CENTR","CENT","CEN","CIRCLES","CIRCLE","CIRCL","CIRC","CIRS","CIR","CLB","CLFS","CLF","CLIFFS","CLIFF","CLUB","CMNS","CMN","CMP","CNTER","CNTR","CNYN","COMMONS","COMMON","CORNERS","CORNER","CORS","COR","COURSE","COURTS","COURT","COVES","COVE","CPE","CP","CRCLE","CRCL","CREEK","CRESCENT","CREST","CRES","CRK","CROSSING","CROSSROADS","CROSSROAD","CRSENT","CRSE","CRSNT","CRSSNG","CRST","CSWY","CTRS","CTR","CTS","CT","CURVE","CURV","CVS","CV","CYN","DALE","DAM","DIVIDE","DIV","DL","DM","DRIVES","DRIVE","DRIV","DRS","DRV","DR","DVD","DV","ESTATES","ESTATE","ESTS","EST","EXPRESSWAY","EXPRESS","EXPR","EXPW","EXPY","EXP","EXTENSIONS","EXTENSION","EXTNSN","EXTN","EXTS","EXT","FALLS","FALL","FERRY","FIELDS","FIELD","FLATS","FLAT","FLDS","FLD","FLS","FLTS","FLT","FORDS","FORD","FORESTS","FOREST","FORGES","FORGE","FORG","FORKS","FORK","FORT","FRDS","FRD","FREEWAY","FREEWY","FRGS","FRG","FRKS","FRK","FRRY","FRST","FRT","FRWAY","FRWY","FRY","FT","FWY","GARDENS","GARDEN","GARDN","GATEWAY","GATEWY","GATWAY","GDNS","GDN","GLENS","GLEN","GLNS","GLN","GRDEN","GRDNS","GRDN","GREENS","GREEN","GRNS","GRN","GROVES","GROVE","GROV","GRVS","GRV","GTWAY","GTWY","HARBORS","HARBOR","HARBR","HARB","HAVEN","HBRS","HBR","HEIGHTS","HIGHWAY","HIGHWY","HILLS","HILL","HIWAY","HIWY","HLLW","HLS","HL","HOLLOWS","HOLLOW","HOLWS","HOLW","HRBOR","HTS","HT","HVN","HWAY","HWY","INLET","INLT","INTERSTATE","ISLANDS","ISLAND","ISLES","ISLE","ISLNDS","ISLND","ISS","IS","JCTION","JCTNS","JCTN","JCTS","JCT","JUNCTIONS","JUNCTION","JUNCTN","JUNCTON","KEYS","KEY","KNLS","KNL","KNOLLS","KNOLL","KNOL","KYS","KY","LAKES","LAKE","LANDING","LAND","LANE","LCKS","LCK","LDGE","LDG","LF","LGTS","LGT","LIGHTS","LIGHT","LKS","LK","LNDG","LNDNG","LN","LOAF","LOCKS","LOCK","LODGE","LODG","LOOPS","LOOP","MALL","MANORS","MANOR","MDWS","MDW","MEADOWS","MEADOW","MEDOWS","MEWS","MILLS","MILL","MISSION","MISSN","MLS","ML","MNRS","MNR","MNTAIN","MNTNS","MNTN","MNT","MOTORWAY","MOUNTAINS","MOUNTAIN","MOUNTIN","MOUNT","MSN","MSSN","MTIN","MTNS","MTN","MTWY","MT","NCK","NECK","OPAS","ORCHARD","ORCHRD","ORCH","OVAL","OVERPASS","OVL","PARKS","PARKWAYS","PARKWAY","PARKWY","PARK","PASSAGE","PASS","PATHS","PATH","PIKES","PIKE","PINES","PINE","PKWAY","PKWYS","PKWY","PKY","PLACE","PLAINS","PLAIN","PLAZA","PLNS","PLN","PLZA","PLZ","PL","PNES","PNE","POINTS","POINT","PORTS","PORT","PRAIRIE","PRK","PRR","PRTS","PRT","PR","PSGE","PTS","PT","RADIAL","RADIEL","RADL","RAD","RAMP","RANCHES","RANCH","RAPIDS","RAPID","RDGE","RDGS","RDG","RDS","RD","REST","RIDGES","RIDGE","RIVER","RIVR","RIV","RNCHS","RNCH","ROADS","ROAD","ROUTE","ROW","RPDS","RPD","RST","RTE","RUE","RUN","RVR","SHLS","SHL","SHOALS","SHOAL","SHOARS","SHOAR","SHORES","SHORE","SHRS","SHR","SKWY","SKYWAY","SMT","SPGS","SPG","SPNGS","SPNG","SPRINGS","SPRING","SPRNGS","SPRNG","SPURS","SPUR","SQRE","SQRS","SQR","SQS","SQUARES","SQUARE","SQU","SQ","STATION","STATN","STA","STN","STRAVENUE","STRAVEN","STRAVN","STRAV","STRA","STREAM","STREETS","STREET","STREME","STRM","STRT","STRVNUE","STRVN","STR","STS","ST","SUMITT","SUMIT","SUMMIT","TERRACE","TERR","TER","THROUGHWAY","TPKE","TRACES","TRACE","TRACKS","TRACK","TRAFFICWAY","TRAILER","TRAILS","TRAIL","TRAK","TRCE","TRFY","TRKS","TRK","TRLRS","TRLR","TRLS","TRL","TRNPK","TRWY","TUNEL","TUNLS","TUNL","TUNNELS","TUNNEL","TUNNL","TURNPIKE","TURNPK","UNDERPASS","UNIONS","UNION","UNS","UN","UPAS","VALLEYS","VALLEY","VALLY","VDCT","VIADCT","VIADUCT","VIA","VIEWS","VIEW","VILLAGES","VILLAGE","VILLAG","VILLE","VILLG","VILLIAGE","VILL","VISTA","VIST","VIS","VLGS","VLG","VLLY","VLYS","VLY","VL","VSTA","VST","VWS","VW","WALKS","WALK","WALL","WAYS","WAY","WELLS","WELL","WLS","WL","WY","XING","XRDS","XRD").!
 
-  def cityMatch: Parser[String] = regularName
+  val cityMatch: Parser[String] = regularName
 
-  def regularName: Parser[String] = """(?i)([a-zA-Z\-0-9]+)""".r
+  val regularName: Parser[String] = P(CharIn('a'to'z', '0'to'9', 'A'to'Z', List('-')).rep(1).!) map {case ss => ss.mkString("")}
 
-  def stateMatch: Parser[String] = """(?i)(alabama|al|alaska|ak|americansamoa|as|arizona|az|arkansas|ar|california|ca|colorado|co|connecticut|ct|delaware|de|districtofcolumbia|dc|washingtondistrictofcolumbia|washingtondc|federatedstatesofmicronesia|fm|florida|fl|georgia|ga|guam|gu|hawaii|hi|idaho|id|illinois|il|indiana|in|iowa|ia|kansas|ks|kentucky|ky|louisiana|la|maine|me|marshallislands|mh|maryland|md|massachusetts|ma|michigan|mi|minnesota|mn|mississippi|ms|missouri|mo|montana|mt|nebraska|ne|nevada|nv|newhampshire|nh|newjersey|nj|newmexico|nm|newyork|ny|northcarolina|nc|northdakota|nd|northernmarianaislands|mp|ohio|oh|oklahoma|ok|oregon|or|palau|pw|pennsylvania|pa|puertorico|pr|rhodeisland|ri|southcarolina|sc|southdakota|sd|tennessee|tn|texas|tx|utah|ut|vermont|vt|virginislands|vi|virginia|va|washington|wa|westvirginia|wv|wisconsin|wi|wyoming|wy|ae|armedforcespacific|ap|armedforcesamericas|aa)""".r
+  val stateMatch: Parser[String] = StringInIgnoreCase("alabama","al","alaska","ak","americansamoa","as","arizona","az","arkansas","ar","california","ca","colorado","co","connecticut","ct","delaware","de","districtofcolumbia","dc","washingtondistrictofcolumbia","washingtondc","federatedstatesofmicronesia","fm","florida","fl","georgia","ga","guam","gu","hawaii","hi","idaho","id","illinois","il","indiana","in","iowa","ia","kansas","ks","kentucky","ky","louisiana","la","maine","me","marshallislands","mh","maryland","md","massachusetts","ma","michigan","mi","minnesota","mn","mississippi","ms","missouri","mo","montana","mt","nebraska","ne","nevada","nv","newhampshire","nh","newjersey","nj","newmexico","nm","newyork","ny","northcarolina","nc","northdakota","nd","northernmarianaislands","mp","ohio","oh","oklahoma","ok","oregon","or","palau","pw","pennsylvania","pa","puertorico","pr","rhodeisland","ri","southcarolina","sc","southdakota","sd","tennessee","tn","texas","tx","utah","ut","vermont","vt","virginislands","vi","virginia","va","washington","wa","westvirginia","wv","wisconsin","wi","wyoming","wy","ae","armedforcespacific","ap","armedforcesamericas","aa").!
 
-  def zipMatch: Parser[Integer] = """[0-9]{5}""".r ^^ {case matched: String => matched.toInt}
+  val zipMatch: Parser[Integer] = P(CharIn('0'to'9').! ~ CharIn('0'to'9').! ~ CharIn('0'to'9').! ~ CharIn('0'to'9').! ~ CharIn('0'to'9').!) map { case (d1,d2,d3,d4,d5) => (d1+d2+d3+d4+d5).toInt}
 
-  def secondary: Parser[String] = """(?i)(Apartment|APT|Basement|BSMT|Building|BLDG|Department|DEPT|Floor|FL|Front|FRNT|Hanger|HNGR|Key|KEY|Lobby|LBBY|Lot|LOT|Lower|LOWR|Office|OFC|Penthouse|PH|Pier|PIER|Rear|REAR|Room|RM|Side|SIDE|Slip|SLIP|Space|SPC|Stop|STOP|Suite|STE|Trailer|TRLR|Unit|UNIT|Upper|UPPR|Box|#[A-Za-z0-9\-]+|#)""".r
+  val secondary: Parser[String] = P(StringInIgnoreCase("Apartment","APT","Basement","BSMT","Building","BLDG","Department","DEPT","Floor","FL","Front","FRNT","Hanger","HNGR","Key","KEY","Lobby","LBBY","Lot","LOT","Lower","LOWR","Office","OFC","Penthouse","PH","Pier","PIER","Rear","REAR","Room","RM","Side","SIDE","Slip","SLIP","Space","SPC","Stop","STOP","Suite","STE","Trailer","TRLR","Unit","UNIT","Upper","UPPR","Box").! | P("#" ~ CharIn('a'to'z','A'to'Z','0'to'9', List('-')).rep(1)).! | P("#").!)
+
+  val highwayNumber: Parser[String] = P(standaloneStreetNumber | CharIn('a'to'z', 'A'to'Z').!)
 
   def correctForNamelessStreet(addressTokens: List[String], lastSuccessfulInd: Integer, build: Address): Option[String] = {
     val finalInd = List.range(0,addressTokens.length).foldLeft(addressTokens.length)((cum, cur) => {
@@ -99,7 +123,7 @@ class AddressParser(val city: Option[String], val state: Option[String], val zip
 
   def correctForHighwayWithDirectionalName(add: Address): Option[Address] = {
     if(add.streetName.isDefined) {
-      if(parseAll(directionality, add.streetName.get).successful &&
+      if(successful(directionality.parse(add.streetName.get), add.streetName.get) &&
           add.highwayNumber.isDefined) {
         switchPredirectionAndStreetName(add)
       }
@@ -126,7 +150,7 @@ class AddressParser(val city: Option[String], val state: Option[String], val zip
     val streetNameSlice = addressTokens.slice(lastSuccessfulInd+1, previousParseInd)
     var result: Option[Address] = None
     if(
-    (streetNameSlice.count((el) => parseAll(individualNumber, el).successful)>1)) {
+    (streetNameSlice.count((el) => successful(individualNumber.parse(el), el))>1)) {
       result = None
     }
     else if(!(currentBuild.streetNum.isDefined) || currentBuild.streetNum.get.matches("[0.]+"))
@@ -196,7 +220,7 @@ class AddressParser(val city: Option[String], val state: Option[String], val zip
   }
 
   def parseWithDefiniteRemainder(str: String, definiteAddress: Address): Option[Address] = {
-    val splits = str.split(whiteSpace.regex).filter(!_.isEmpty).toList
+    val splits = str.split("""[\r\n\t ]""").filter(!_.isEmpty).toList
     if(splits.length<2)
       None
     else {
@@ -286,7 +310,7 @@ class AddressParser(val city: Option[String], val state: Option[String], val zip
           Some(poBox.get)
         }
         else {
-          splitList = Address.stateReplace(str).split("""[\s,.]""").filter(x => !x.isEmpty && !(x.trim.matches("0+")))
+          splitList = Address.stateReplace(str).split("""[\s,.]""").filter(x => !x.isEmpty && !(x.trim.replaceAll("0+", "").isEmpty))
           val reverseResult = parseWithFSM(splitList.reverse.toList, startingAddr, 0, -1, LookingForCity)
           if (reverseResult.isDefined) {
             parseForwardWithFSM(splitList.toList, 0, -1, reverseResult.get._1, (splitList.length - (reverseResult.get._2 + 1)), START)
@@ -337,21 +361,21 @@ class AddressParser(val city: Option[String], val state: Option[String], val zip
       None
     else
     {
-      val firstTok = parseAll(validator1, addressTokens(currentInd))
-      if(firstTok.successful && currentInd<(addressTokens.length-1)) {
-        val secondTok = parseAll(validator2, addressTokens(currentInd+1))
-        if(secondTok.successful) {
+      val firstTok = validator1.parse(addressTokens(currentInd))
+      if(successful(firstTok, addressTokens(currentInd)) && currentInd<(addressTokens.length-1)) {
+        val secondTok = validator2.parse(addressTokens(currentInd+1))
+        if(successful(secondTok, addressTokens(currentInd+1))) {
           var continue: Boolean = false
           if(reverse)
-            continue = twoParseValidation(firstTok.get, secondTok.get)
+            continue = twoParseValidation(firstTok.get.value, secondTok.get.value)
           else
-            continue = twoParseValidation(secondTok.get, firstTok.get)
+            continue = twoParseValidation(secondTok.get.value, firstTok.get.value)
 
           if(continue) {
             if(reverse)
-              Some((firstTok.get + " " + secondTok.get, currentInd+1)).asInstanceOf[Option[(String, Integer)]]
+              Some((firstTok.get.value + " " + secondTok.get.value, currentInd+1)).asInstanceOf[Option[(String, Integer)]]
             else
-              Some((secondTok.get + " " + firstTok.get, currentInd+1)).asInstanceOf[Option[(String, Integer)]]
+              Some((secondTok.get.value + " " + firstTok.get.value, currentInd+1)).asInstanceOf[Option[(String, Integer)]]
           }
           else {
             finishTwoTokenItem(addressTokens, completeValidator, currentInd)
@@ -369,13 +393,15 @@ class AddressParser(val city: Option[String], val state: Option[String], val zip
   }
 
   def finishTwoTokenItem(addressTokens: List[String], completeValidator: Parser[String], currentInd: Integer): Option[(String, Integer)] = {
-    val completeTok = parseAll(completeValidator, addressTokens(currentInd))
-    if(completeTok.successful) {
-      Some((completeTok.get, currentInd))
+    val completeTok = completeValidator.parse(addressTokens(currentInd))
+    if(successful(completeTok, addressTokens(currentInd))) {
+      Some((completeTok.get.value, currentInd))
     }
     else
       None //this should be impossbile
   }
+
+  def successful(parsed: Parsed[_], currentTok: String): Boolean = parsed.isInstanceOf[Success[_]] && parsed.index==currentTok.length
 
   def parseWithFSM(addressTokens: List[String], currentBuild: Address, currentInd: Integer, lastSuccessfulInd: Integer, currentState: AddressFSMState): Option[(Address, Integer)] = {
     if(currentInd>=addressTokens.length)
@@ -384,9 +410,9 @@ class AddressParser(val city: Option[String], val state: Option[String], val zip
       currentState match {
         case START => {
           val currentTok = addressTokens(currentInd)
-          val parsed = parseAll(zipMatch, currentTok)
-          if(parsed.successful)
-            parseWithFSM(addressTokens, currentBuild.withZip(parsed.get), currentInd+1, currentInd, LookingForState)
+          val parsed = zipMatch.parse(currentTok)
+          if(successful(parsed, currentTok))
+            parseWithFSM(addressTokens, currentBuild.withZip(parsed.get.value), currentInd+1, currentInd, LookingForState)
           else if(zip.isDefined)
             parseWithFSM(addressTokens, currentBuild.withZip(zip.get), currentInd,lastSuccessfulInd, LookingForState)
           else
@@ -394,8 +420,8 @@ class AddressParser(val city: Option[String], val state: Option[String], val zip
         }
         case LookingForState => {
           val currentTok = addressTokens(currentInd)
-          val parsed = parseAll(stateMatch, currentTok)
-          if(parsed.successful)
+          val parsed = stateMatch.parse(currentTok)
+          if(successful(parsed, currentTok))
             parseWithFSM(addressTokens,currentBuild.withState(addressTokens(currentInd)), currentInd+1, currentInd, LookingForCity)
           else if (state.isDefined)
             parseWithFSM(addressTokens, currentBuild.withState(state.get), currentInd,lastSuccessfulInd, LookingForCity)
@@ -404,7 +430,7 @@ class AddressParser(val city: Option[String], val state: Option[String], val zip
         }
         case LookingForCity => {
           val currentTok = addressTokens(currentInd)
-          val parsed = getTwoTokenItem(reverse = false, addressTokens, currentInd, """[a-zA-Z0-9\-]+""".r, secondary, secondary, noOpValidator)//parseAll(secondary, currentTok)
+          val parsed = getTwoTokenItem(reverse = false, addressTokens, currentInd, regularName, secondary, secondary, noOpValidator)//parseAll(secondary, currentTok)
           val beginningInd = lastSuccessfulInd + 1
           if(parsed.isDefined) {
             if((currentInd - beginningInd) >=1) {
@@ -421,8 +447,8 @@ class AddressParser(val city: Option[String], val state: Option[String], val zip
           }
           else {
             //the current token was not a secondary address indicator.  Try post directional
-            val parsedPostDir = parseAll(directionality, currentTok)
-            if(parsedPostDir.successful) {
+            val parsedPostDir = directionality.parse(currentTok)
+            if(successful(parsedPostDir, currentTok)) {
               if((currentInd - beginningInd) >= 1) {
                 val dirPortion = getTwoTokenItem(reverse = false, addressTokens, currentInd,  singleDirectional, singleDirectional, directionality, directionValidator)
                 if(dirPortion.isDefined) {
@@ -446,9 +472,9 @@ class AddressParser(val city: Option[String], val state: Option[String], val zip
               }
             }
             else {
-              val parsedHighwayNumber = parseAll(standaloneStreetNumber|"""[a-zA-Z]{1}""".r, currentTok)
-              if (parsedHighwayNumber.successful) {
-                if(!(currentInd==addressTokens.length-1) && parseAll(streetType, addressTokens(currentInd+1)).successful) { //make sure if we find a number that the street type is next
+              val parsedHighwayNumber = highwayNumber.parse(currentTok)
+              if (successful(parsedHighwayNumber, currentTok)) {
+                if(!(currentInd==addressTokens.length-1) && successful(streetType.parse(addressTokens(currentInd+1)), addressTokens(currentInd+1))) { //make sure if we find a number that the street type is next
                   if ((currentInd - beginningInd) >= 1) {
                     val nextBuild = currentBuild.withHighwayNumber(addressTokens(currentInd)).withCity(city.getOrElse(addressTokens.slice(beginningInd, currentInd).reverse.mkString(" ").trim))
                     parseWithFSM(addressTokens, nextBuild, currentInd + 1, currentInd, LookingForStreetType)
@@ -467,8 +493,8 @@ class AddressParser(val city: Option[String], val state: Option[String], val zip
               }
               else
               {
-                val parsedStreetType = parseAll(streetType, currentTok)
-                if (parsedStreetType.successful) {
+                val parsedStreetType = streetType.parse(currentTok)
+                if (successful(parsedStreetType, currentTok)) {
                   if ((currentInd - beginningInd) >= 1) {
                     val nextBuild = currentBuild.withstreetType(addressTokens(currentInd)).withCity(city.getOrElse(addressTokens.slice(beginningInd, currentInd).reverse.mkString(" ").trim))
                     Some((nextBuild, currentInd))
@@ -491,8 +517,8 @@ class AddressParser(val city: Option[String], val state: Option[String], val zip
         }
         case LookingForPostDirectional => {
           val currentTok = addressTokens(currentInd)
-          val parsed = parseAll(directionality, currentTok)
-          if(parsed.successful) {
+          val parsed = directionality.parse(currentTok)
+          if(successful(parsed, currentTok)) {
             val dirPortion = getTwoTokenItem(reverse = false, addressTokens, currentInd,  singleDirectional, singleDirectional, directionality, directionValidator)
             if(dirPortion.isDefined) {
               val nextBuild = currentBuild.withPostDirection(dirPortion.get._1)
@@ -507,19 +533,28 @@ class AddressParser(val city: Option[String], val state: Option[String], val zip
         }
         case LookingForHighwayNumber => {
           val currentTok = addressTokens(currentInd)
-          val parsedHighwayNumber = getTwoTokenItem(false, addressTokens, currentInd,standaloneStreetNumber|"""[a-zA-Z]""".r, streetType, (standaloneStreetNumber|"""[a-zA-Z]""".r)~streetType ^^ { case first~second => first}, noOpValidator)
+          val parsedHighwayNumber = getTwoTokenItem(false, addressTokens, currentInd,highwayNumber, streetType, highwayNumber~streetType map { case (first, second) => first}, noOpValidator)
          // val parsedHighwayNumber = parseAll(standaloneStreetNumber|"""[a-zA-Z]""".r, currentTok)
           if (parsedHighwayNumber.isDefined) {
-            val nextBuild = currentBuild.withHighwayNumber(parsedHighwayNumber.get._1.split("\\s+")(1))
-            parseWithFSM(addressTokens, nextBuild, currentInd+1, currentInd, LookingForStreetType)
+            val splits = parsedHighwayNumber.get._1.split("\\s+")
+            if(splits.length==0)
+              None
+            else if(splits.length==1){
+              val nextBuild = currentBuild.withHighwayNumber(splits(0))
+              parseWithFSM(addressTokens, nextBuild, currentInd+1, currentInd, LookingForStreetType)
+            }
+            else {
+              val nextBuild = currentBuild.withHighwayNumber(splits(1))
+              parseWithFSM(addressTokens, nextBuild, currentInd+1, currentInd, LookingForStreetType)
+            }
           }
           else
             parseWithFSM(addressTokens, currentBuild, currentInd, lastSuccessfulInd, LookingForStreetType)
         }
         case LookingForStreetType => {
           val currentTok = addressTokens(currentInd)
-          val parsed = parseAll(streetType, currentTok)
-          if(parsed.successful) {
+          val parsed = streetType.parse(currentTok)
+          if(successful(parsed, currentTok)) {
             val nextBuild = currentBuild.withstreetType(addressTokens(currentInd))
             Some((nextBuild, currentInd))
           }

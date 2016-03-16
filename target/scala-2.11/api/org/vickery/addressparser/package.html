@@ -1,0 +1,296 @@
+<!DOCTYPE html >
+<html>
+        <head>
+          <title>addressparser - org.vickery.addressparser</title>
+          <meta name="description" content="addressparser - org.vickery.addressparser" />
+          <meta name="keywords" content="addressparser org.vickery.addressparser" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../index.html';
+            var hash = 'org.vickery.addressparser.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img alt="Package" src="../../../lib/package_big.png" />
+        <p id="owner"><a href="../../package.html" class="extype" name="org">org</a>.<a href="../package.html" class="extype" name="org.vickery">vickery</a></p>
+        <h1>addressparser</h1><span class="permalink">
+      <a href="../../../index.html#org.vickery.addressparser.package" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">addressparser</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="org.vickery.addressparser.Address" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="AddressextendsProductwithSerializable"></a>
+      <a id="Address:Address"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="Address.html"><span class="name">Address</span></a><span class="params">(<span name="streetNum">streetNum: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="internalNumber">internalNumber: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="streetName">streetName: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="streetType">streetType: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="preDirection">preDirection: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="postDirection">postDirection: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="city">city: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="state">state: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="zip">zip: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="java.lang.Integer">Integer</span>]</span>, <span name="highwayNumber">highwayNumber: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.vickery.addressparser.package@AddressextendsProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">For parsing addresses into well-formed objects.</p><div class="fullcomment"><div class="comment cmt"><p>For parsing addresses into well-formed objects.</p><p>123 main st. NW mytown NH 11111
+123 main st. mytown
+Created by vickery on 9/17/15.
+</p></div></div>
+    </li><li name="org.vickery.addressparser.AddressFSMState" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="AddressFSMStateextendsAnyRef"></a>
+      <a id="AddressFSMState:AddressFSMState"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="AddressFSMState.html"><span class="name">AddressFSMState</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.vickery.addressparser.package@AddressFSMStateextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="org.vickery.addressparser.AddressParser" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="AddressParserextendsRegexParsers"></a>
+      <a id="AddressParser:AddressParser"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="AddressParser.html"><span class="name">AddressParser</span></a><span class="result"> extends <span class="extype" name="scala.util.parsing.combinator.RegexParsers">RegexParsers</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.vickery.addressparser.package@AddressParserextendsRegexParsers" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">123 S main st.</p><div class="fullcomment"><div class="comment cmt"><p>123 S main st. town state
+Created by vickery on 9/17/15.
+</p></div></div>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="org.vickery.addressparser.Address" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Address"></a>
+      <a id="Address:Address"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Address$.html"><span class="name">Address</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.vickery.addressparser.package@Address" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="org.vickery.addressparser.LookingForCity" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LookingForCity"></a>
+      <a id="LookingForCity:LookingForCity"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="LookingForCity$.html"><span class="name">LookingForCity</span></a><span class="result"> extends <a href="AddressFSMState.html" class="extype" name="org.vickery.addressparser.AddressFSMState">AddressFSMState</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.vickery.addressparser.package@LookingForCity" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="org.vickery.addressparser.LookingForHighwayNumber" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LookingForHighwayNumber"></a>
+      <a id="LookingForHighwayNumber:LookingForHighwayNumber"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="LookingForHighwayNumber$.html"><span class="name">LookingForHighwayNumber</span></a><span class="result"> extends <a href="AddressFSMState.html" class="extype" name="org.vickery.addressparser.AddressFSMState">AddressFSMState</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.vickery.addressparser.package@LookingForHighwayNumber" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="org.vickery.addressparser.LookingForPostDirectional" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LookingForPostDirectional"></a>
+      <a id="LookingForPostDirectional:LookingForPostDirectional"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="LookingForPostDirectional$.html"><span class="name">LookingForPostDirectional</span></a><span class="result"> extends <a href="AddressFSMState.html" class="extype" name="org.vickery.addressparser.AddressFSMState">AddressFSMState</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.vickery.addressparser.package@LookingForPostDirectional" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="org.vickery.addressparser.LookingForPreDirectional" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LookingForPreDirectional"></a>
+      <a id="LookingForPreDirectional:LookingForPreDirectional"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="LookingForPreDirectional$.html"><span class="name">LookingForPreDirectional</span></a><span class="result"> extends <a href="AddressFSMState.html" class="extype" name="org.vickery.addressparser.AddressFSMState">AddressFSMState</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.vickery.addressparser.package@LookingForPreDirectional" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="org.vickery.addressparser.LookingForState" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LookingForState"></a>
+      <a id="LookingForState:LookingForState"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="LookingForState$.html"><span class="name">LookingForState</span></a><span class="result"> extends <a href="AddressFSMState.html" class="extype" name="org.vickery.addressparser.AddressFSMState">AddressFSMState</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.vickery.addressparser.package@LookingForState" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="org.vickery.addressparser.LookingForStreetType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LookingForStreetType"></a>
+      <a id="LookingForStreetType:LookingForStreetType"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="LookingForStreetType$.html"><span class="name">LookingForStreetType</span></a><span class="result"> extends <a href="AddressFSMState.html" class="extype" name="org.vickery.addressparser.AddressFSMState">AddressFSMState</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.vickery.addressparser.package@LookingForStreetType" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="org.vickery.addressparser.START" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="START"></a>
+      <a id="START:START"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="START$.html"><span class="name">START</span></a><span class="result"> extends <a href="AddressFSMState.html" class="extype" name="org.vickery.addressparser.AddressFSMState">AddressFSMState</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.vickery.addressparser.package@START" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>

@@ -7,29 +7,29 @@ package org.vickery.addressparser
  * 123 main st. mytown
  * Created by vickery on 9/17/15.
  */
-case class Address(val streetNum: Option[String],
-              val internalNumber: Option[String],
-              val streetName: Option[String],
-              val streetType: Option[String],
-              val preDirection: Option[String],
-                   val postDirection: Option[String],
-               val city: Option[String],
-               val state: Option[String],
-               val zip: Option[Integer],
-                    val highwayNumber: Option[String]) {
+case class Address(var streetNum: Option[String],
+              var internalNumber: Option[String],
+              var streetName: Option[String],
+              var streetType: Option[String],
+              var preDirection: Option[String],
+                   var postDirection: Option[String],
+               var city: Option[String],
+               var state: Option[String],
+               var zip: Option[Integer],
+                    var highwayNumber: Option[String]) {
 
   def this() = this(None, None, None,None,None,None,None,None,None,None)
 
-  def withStreetNumber(newNum: String) = new Address(Some(newNum), internalNumber, streetName, streetType, preDirection, postDirection, city, state, zip, highwayNumber)
-  def withInternalNumber(newNum: String) = new Address(streetNum, Some(newNum), streetName, streetType, preDirection, postDirection, city, state, zip, highwayNumber)
-  def withStreetName(newSN: String) = new Address(streetNum, internalNumber, Some(newSN), streetType, preDirection, postDirection, city, state, zip, highwayNumber)
-  def withHighwayNumber(newNum: String) = new Address(streetNum, internalNumber, streetName, streetType, preDirection, postDirection, city, state, zip, Some(newNum))
-  def withstreetType(newType: String) = new Address(streetNum, internalNumber, streetName, Some(newType), preDirection, postDirection, city, state, zip, highwayNumber)
-  def withPreDirection(newPre: String) = new Address(streetNum, internalNumber, streetName, streetType, Some(newPre), postDirection, city, state, zip, highwayNumber)
-  def withPostDirection(newPost: String) = new Address(streetNum, internalNumber, streetName, streetType, preDirection, Some(newPost), city, state, zip, highwayNumber)
-  def withCity(newCity: String) = new Address(streetNum, internalNumber, streetName, streetType, preDirection, postDirection, Some(newCity), state, zip, highwayNumber)
-  def withState(newState: String) = new Address(streetNum, internalNumber, streetName, streetType, preDirection, postDirection, city, Some(newState), zip, highwayNumber)
-  def withZip(newZip: Integer) = new Address(streetNum, internalNumber, streetName, streetType, preDirection, postDirection, city, state, if(newZip == -1) None else Some(newZip), highwayNumber)
+  def withStreetNumber(newNum: String) = {streetNum= Some(newNum);this}
+  def withInternalNumber(newNum: String) = {internalNumber = Some(newNum);this}
+  def withStreetName(newSN: String) = {streetName = Some(newSN);this}
+  def withHighwayNumber(newNum: String) = {highwayNumber=Some(newNum);this}
+  def withstreetType(newType: String) = {streetType=Some(newType);this}
+  def withPreDirection(newPre: String) = {preDirection=Some(newPre);this}
+  def withPostDirection(newPost: String) = {postDirection=Some(newPost);this}
+  def withCity(newCity: String) = {city=Some(newCity);this}
+  def withState(newState: String) = {state=Some(newState);this}
+  def withZip(newZip: Integer) = {if(newZip == -1) zip=None else zip=Some(newZip);this}
 
   override def toString = "Num(" + streetNum.getOrElse("") + ") " +
     "PreDir(" + preDirection.getOrElse("null") + ") " +

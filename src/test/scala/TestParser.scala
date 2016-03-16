@@ -1,6 +1,7 @@
 import org.scalatest.{FlatSpec, Matchers}
 import org.vickery.addressparser.AddressParser
 import org.vickery.addressparser.Address
+import fastparse.core.Parsed.Success
 
 /**
  * Created by vickery on 10/8/15.
@@ -25,6 +26,13 @@ class TestParser extends FlatSpec with Matchers
 
   //TODO city state zip stuff if we need it
   //val cityNames = List("citytown", "city town")
+
+  "street-type-1" should "parse" in {
+    completeParser.streetType.parse("st").isInstanceOf[Success[_]] should be (true)
+    completeParser.streetType.parse("ALLEY").isInstanceOf[Success[_]] should be (true)
+    completeParser.streetType.parse("street").isInstanceOf[Success[_]] should be (true)
+    completeParser.streetType.parse("stREet").isInstanceOf[Success[_]] should be (true)
+  }
 
   "123 main st. " should "be parsed" in {
     val addressToParse = "123 main st."

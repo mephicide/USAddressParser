@@ -1,0 +1,4 @@
+[0m[[0minfo[0m] [0m:: delivering :: org.vickery#address-parser_2.11;1.4 :: 1.4 :: release :: Wed Mar 02 09:29:32 EST 2016[0m
+[0m[[0mdebug[0m] [0m	options = status=release pubdate=Wed Mar 02 09:29:32 EST 2016 validate=true resolveDynamicRevisions=true merge=true resolveId=null pubBranch=null[0m
+[0m[[0minfo[0m] [0m	delivering ivy file to /Users/vickery/IdeaProjects/AddressParser/target/scala-2.11/ivy-1.4.xml[0m
+[0m[[0mdebug[0m] [0m	deliver done (16ms)[0m

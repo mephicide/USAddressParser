@@ -1,0 +1,7 @@
+[0m[[0minfo[0m] [0mPackaging /Users/vickery/IdeaProjects/AddressParser/target/scala-2.11/address-parser_2.11-1.4-sources.jar ...[0m
+[0m[[0mdebug[0m] [0mInput file mappings:[0m
+[0m[[0mdebug[0m] [0m	org/vickery/addressparser/Address.scala[0m
+[0m[[0mdebug[0m] [0m	  /Users/vickery/IdeaProjects/AddressParser/src/main/scala/org/vickery/addressparser/Address.scala[0m
+[0m[[0mdebug[0m] [0m	org/vickery/addressparser/AddressParser.scala[0m
+[0m[[0mdebug[0m] [0m	  /Users/vickery/IdeaProjects/AddressParser/src/main/scala/org/vickery/addressparser/AddressParser.scala[0m
+[0m[[0minfo[0m] [0mDone packaging.[0m
