@@ -10,7 +10,7 @@ import fastparse.core.Parsed.Success
  * 123 S main st. town state
  * Created by vickery on 9/17/15.
  */
-class AddressParser(val city: Option[String], val state: Option[String], val zip: Option[Integer], val ignoreEverythingPriorToPostDirMode: Boolean = false){
+class AddressParser(var city: Option[String], var state: Option[String], var zip: Option[Integer], var ignoreEverythingPriorToPostDirMode: Boolean = false){
 
   import fastparse.all._
 

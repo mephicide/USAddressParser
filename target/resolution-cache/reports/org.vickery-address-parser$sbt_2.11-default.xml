@@ -4,15 +4,15 @@
 	<info
 		organisation="org.vickery"
 		module="address-parser$sbt_2.11"
-		revision="2.0"
+		revision="2.1"
 		conf="default"
 		confs="default"
-		date="20160316133040"/>
+		date="20160316134522"/>
 	<dependencies>
 		<module organisation="org.scala-sbt" name="sbt">
 			<revision name="0.13.7" status="release" pubdate="20141119013555" resolver="sbt-chain" artresolver="sbt-chain" downloaded="false" searched="false" default="false" conf="default(compile), compile" position="0">
 				<metadata-artifact status="no" details="" size="1791" time="0" location="/Users/vickery/.ivy2/cache/org.scala-sbt/sbt/ivy-0.13.7.xml" searched="false" origin-is-local="false" origin-location="http://repo.typesafe.com/typesafe/ivy-releases/org.scala-sbt/sbt/0.13.7/ivys/ivy.xml"/>
-				<caller organisation="org.vickery" name="address-parser$sbt_2.11" conf="default" rev="0.13.7" rev-constraint-default="0.13.7" rev-constraint-dynamic="0.13.7" callerrev="2.0"/>
+				<caller organisation="org.vickery" name="address-parser$sbt_2.11" conf="default" rev="0.13.7" rev-constraint-default="0.13.7" rev-constraint-dynamic="0.13.7" callerrev="2.1"/>
 				<artifacts>
 					<artifact name="sbt" type="jar" ext="jar" status="no" details="" size="21270" time="0" location="/Users/vickery/.ivy2/cache/org.scala-sbt/sbt/jars/sbt-0.13.7.jar">
 						<origin-location is-local="false" location="http://repo.typesafe.com/typesafe/ivy-releases/org.scala-sbt/sbt/0.13.7/jars/sbt.jar"/>

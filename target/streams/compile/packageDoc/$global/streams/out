@@ -1,9 +1,11 @@
-[0m[[0minfo[0m] [0mPackaging /Users/vickery/IdeaProjects/AddressParser/target/scala-2.11/address-parser_2.11-1.4-javadoc.jar ...[0m
+[0m[[0minfo[0m] [0mPackaging /Users/vickery/IdeaProjects/AddressParser/target/scala-2.11/address-parser_2.11-2.0-javadoc.jar ...[0m
 [0m[[0mdebug[0m] [0mInput file mappings:[0m
 [0m[[0mdebug[0m] [0m	lib/trait_big.png[0m
 [0m[[0mdebug[0m] [0m	  /Users/vickery/IdeaProjects/AddressParser/target/scala-2.11/api/lib/trait_big.png[0m
 [0m[[0mdebug[0m] [0m	org/vickery/addressparser/LookingForPostDirectional$.html[0m
 [0m[[0mdebug[0m] [0m	  /Users/vickery/IdeaProjects/AddressParser/target/scala-2.11/api/org/vickery/addressparser/LookingForPostDirectional$.html[0m
+[0m[[0mdebug[0m] [0m	org/vickery/addressparser/AddressParser$StringInIgnoreCase.html[0m
+[0m[[0mdebug[0m] [0m	  /Users/vickery/IdeaProjects/AddressParser/target/scala-2.11/api/org/vickery/addressparser/AddressParser$StringInIgnoreCase.html[0m
 [0m[[0mdebug[0m] [0m	lib/signaturebg2.gif[0m
 [0m[[0mdebug[0m] [0m	  /Users/vickery/IdeaProjects/AddressParser/target/scala-2.11/api/lib/signaturebg2.gif[0m
 [0m[[0mdebug[0m] [0m	index/index-h.html[0m
