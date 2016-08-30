@@ -1,4 +1,4 @@
-[0m[[0minfo[0m] [0m:: delivering :: org.vickery#address-parser_2.11;2.0 :: 2.0 :: release :: Wed Mar 16 13:32:58 EDT 2016[0m
-[0m[[0mdebug[0m] [0m	options = status=release pubdate=Wed Mar 16 13:32:58 EDT 2016 validate=true resolveDynamicRevisions=true merge=true resolveId=null pubBranch=null[0m
-[0m[[0minfo[0m] [0m	delivering ivy file to /Users/vickery/IdeaProjects/AddressParser/target/scala-2.11/ivy-2.0.xml[0m
-[0m[[0mdebug[0m] [0m	deliver done (17ms)[0m
+[0m[[0minfo[0m] [0m:: delivering :: org.vickery#address-parser_2.11;2.1 :: 2.1 :: release :: Wed Mar 16 13:46:33 EDT 2016[0m
+[0m[[0mdebug[0m] [0m	options = status=release pubdate=Wed Mar 16 13:46:33 EDT 2016 validate=true resolveDynamicRevisions=true merge=true resolveId=null pubBranch=null[0m
+[0m[[0minfo[0m] [0m	delivering ivy file to /Users/vickery/IdeaProjects/AddressParser/target/scala-2.11/ivy-2.1.xml[0m
+[0m[[0mdebug[0m] [0m	deliver done (14ms)[0m

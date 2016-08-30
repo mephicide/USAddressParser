@@ -423,6 +423,23 @@ class TestParser extends FlatSpec with Matchers
     completeParser.parseWithKnownCityStateZip(addressToParse).get.canonicalHighWayNumber should be ("183")
   }
 
+  "73051 Hwy 111" should "be parsed" in {
+    val addressToParse = "73051 Hwy 111"
+    val result = completeParser.parseWithKnownCityStateZip(addressToParse)
+    result  should be (Some(new Address(Some("73051"),
+      None,
+      Some(""),
+      Some("hwy"),
+      None,
+      None,
+      optCity,
+      optState,
+      optZip,
+      Some("111"))))
+
+    completeParser.parseWithKnownCityStateZip(addressToParse).get.canonicalHighWayNumber should be ("111")
+  }
+
   "6425 S Interstate 35 Ste 105" should "be parsed" in {
     val addressToParse = "6425 S Interstate 35 Ste 105"
     completeParser.parseWithKnownCityStateZip(addressToParse) should be (Some(new Address(Some("6425"),
