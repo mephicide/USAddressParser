@@ -160,7 +160,7 @@ class AddressParser(var city: Option[String], var state: Option[String], var zip
     else if(streetNameSlice.isEmpty && (currentBuild.internalNumber.isDefined || currentBuild.postDirection.isDefined || ignoreEverythingPriorToPostDirMode)) {
       val newStName = correctForNamelessStreet(addressTokens, lastSuccessfulInd, currentBuild)
       if(newStName.isDefined){
-        if(newStName.get.isEmpty && currentBuild.preDirection.isDefined)
+        if(newStName.get.isEmpty && currentBuild.preDirection.isDefined || successful(streetType.parse(newStName.get.toUpperCase), newStName.get))
           result = switchPredirectionAndStreetName(currentBuild)
         else
           result = Some(currentBuild.withStreetName(newStName.get.trim))
@@ -311,7 +311,11 @@ class AddressParser(var city: Option[String], var state: Option[String], var zip
         }
         else {
           splitList = Address.stateReplace(str).split("""[\s,.]""").filter(x => !x.isEmpty && !(x.trim.replaceAll("0+", "").isEmpty))
-          val reverseResult = parseWithFSM(splitList.reverse.toList, startingAddr, 0, -1, LookingForCity)
+          val reverseResult = if(ignoreEverythingPriorToPostDirMode)
+                                  parseWithFSM(splitList.reverse.toList, startingAddr, 0, -1, LookingForPostDirectional)
+                                else
+                                  parseWithFSM(splitList.reverse.toList, startingAddr, 0, -1, LookingForCity)
+
           if (reverseResult.isDefined) {
             parseForwardWithFSM(splitList.toList, 0, -1, reverseResult.get._1, (splitList.length - (reverseResult.get._2 + 1)), START)
           }

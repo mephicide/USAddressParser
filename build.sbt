@@ -1,7 +1,7 @@
 organization  := "org.vickery"
 name := "address-parser"
 
-version := "2.1"
+version := "2.5"
 
 scalaVersion := "2.11.7"
 
@@ -12,11 +12,11 @@ libraryDependencies += "com.lihaoyi" %% "fastparse" % "0.3.7"
 exportJars := true
 
 credentials += Credentials("Sonatype Nexus Repository Manager",
-  "172.31.20.143",
+  "172.31.58.221",
   "deployment",
   "w7A-6zw-shy-hfA")
 
 publishMavenStyle := true
 //isSnapshot := true
-publishTo := Some("Sonatype Nexus Repository Manager" at "http://172.31.20.143:8081/nexus/content/repositories/releases")
+publishTo := Some("Sonatype Nexus Repository Manager" at "http://172.31.58.221:8081/nexus/content/repositories/releases")
     

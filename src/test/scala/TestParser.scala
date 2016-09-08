@@ -233,7 +233,7 @@ class TestParser extends FlatSpec with Matchers
   "123 main st. bldg 345" should "be parsed, ignoring the secondary designator" in {
     val addressToParse = "123 main st. suite 345"
     completeParser.parseWithKnownCityStateZip(addressToParse) should be (Some(new Address(Some("123"),
-      Some("suite 345"),
+      None,
       Some("main"),
       Some("st"),
       None,
@@ -247,7 +247,7 @@ class TestParser extends FlatSpec with Matchers
   "123 main st. #345" should "be parsed, ignoring the secondary designator" in {
     val addressToParse = "123 main st. #345"
     completeParser.parseWithKnownCityStateZip(addressToParse) should be (Some(new Address(Some("123"),
-      Some("#345"),
+      None,
       Some("main"),
       Some("st"),
       None,
@@ -443,7 +443,7 @@ class TestParser extends FlatSpec with Matchers
   "6425 S Interstate 35 Ste 105" should "be parsed" in {
     val addressToParse = "6425 S Interstate 35 Ste 105"
     completeParser.parseWithKnownCityStateZip(addressToParse) should be (Some(new Address(Some("6425"),
-      Some("ste 105"),
+      None,
       None,
       Some("interstate"),
       Some("s"),
@@ -557,6 +557,98 @@ class TestParser extends FlatSpec with Matchers
       None)))
 
     newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalZip should be ("")
+  }
+
+  "Place suffix" should "be parsed" in {
+    val addressToParse = "777 Brockton place"
+    val newParser = new AddressParser(Some("ABINGDON"), Some("MA"), None)
+    newParser.parseWithKnownCityStateZip(addressToParse) should be (Some(new Address(Some("777"),
+      None,
+      Some("brockton"),
+      Some("place"),
+      None,
+      None,
+      Some("ABINGDON"),
+      Some("MA"),
+      None,
+      None)))
+
+    newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalStreetType should be ("Pl")
+  }
+
+  "Broad Branch Rd" should "be parsed" in {
+    val addressToParse = "4464 BROAD BRANCH ROAD"
+    val newParser = new AddressParser(Some("ABINGDON"), Some("MA"), None)
+    newParser.parseWithKnownCityStateZip(addressToParse) should be (Some(new Address(Some("4464"),
+      None,
+      Some("broad branch"),
+      Some("road"),
+      None,
+      None,
+      Some("ABINGDON"),
+      Some("MA"),
+      None,
+      None)))
+
+    newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalStreetType should be ("Rd")
+  }
+
+  "4447 E STREET SE" should "be parsed" in {
+    val addressToParse = "4447 E STREET SE"
+    val newParser = new AddressParser(Some("ABINGDON"), Some("MA"), None)
+    newParser.parseWithKnownCityStateZip(addressToParse) should be (Some(new Address(Some("4447"),
+      None,
+      Some("e"),
+      Some("street"),
+      None,
+      Some("se"),
+      Some("ABINGDON"),
+      Some("MA"),
+      None,
+      None)))
+
+    newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalStreetType should be ("St")
+    newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalPreDirection should be ("")
+    newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalPostDirection should be ("SE")
+    newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalStreetName should be ("E")
+  }
+
+  "5411 EAST AVE" should "be parsed" in {
+    val addressToParse = "5411 EAST AVE"
+    val newParser = new AddressParser(Some("ABINGDON"), Some("MA"), Some(12345), true)
+    newParser.parseWithKnownCityStateZip(addressToParse) should be (Some(new Address(Some("5411"),
+      None,
+      Some("east"),
+      Some("ave"),
+      None,
+      None,
+      Some("ABINGDON"),
+      Some("MA"),
+      Some(12345),
+      None)))
+
+    newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalStreetType should be ("Ave")
+    newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalPreDirection should be ("")
+    newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalPostDirection should be ("")
+    newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalStreetName should be ("East")
+  }
+
+  "727 HICKORY LOT RD" should "be parsed" in {
+    val addressToParse = "727 HICKORY LOT RD"
+    val newParser = new AddressParser(Some("ABINGDON"), Some("MA"), Some(12345), true)
+    newParser.parseWithKnownCityStateZip(addressToParse) should be (Some(new Address(Some("727"),
+      None,
+      Some("hickory lot"),
+      Some("rd"),
+      None,
+      None,
+      Some("ABINGDON"),
+      Some("MA"),
+      Some(12345),
+      None)))
+
+    newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalStreetType should be ("Rd")
+    newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalStreetName should be ("Hickory Lot")
   }
 
   "Empty street contents" should "Not throw an exception" in {

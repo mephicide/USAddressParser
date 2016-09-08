@@ -4,16 +4,16 @@
 	<info
 		organisation="org.vickery"
 		module="address-parser$sources_javadoc_2.11"
-		revision="2.1"
+		revision="2.5"
 		conf="test"
 		confs="compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, sources, docs, pom, scala-tool"
-		date="20160316134523"/>
+		date="20160908164707"/>
 	<dependencies>
 		<module organisation="org.scalatest" name="scalatest_2.11">
 			<revision name="2.2.4" status="release" pubdate="20150129021600" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scalatest.org" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="5">
 				<license name="the Apache License, ASL Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
 				<metadata-artifact status="no" details="" size="4845" time="0" location="/Users/vickery/.ivy2/cache/org.scalatest/scalatest_2.11/ivy-2.2.4.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/scalatest/scalatest_2.11/2.2.4/scalatest_2.11-2.2.4.pom"/>
-				<caller organisation="org.vickery" name="address-parser$sources_javadoc_2.11" conf="test, compile, runtime" rev="2.2.4" rev-constraint-default="2.2.4" rev-constraint-dynamic="2.2.4" callerrev="2.1"/>
+				<caller organisation="org.vickery" name="address-parser$sources_javadoc_2.11" conf="test, compile, runtime" rev="2.2.4" rev-constraint-default="2.2.4" rev-constraint-dynamic="2.2.4" callerrev="2.5"/>
 				<artifacts>
 					<artifact name="scalatest_2.11" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="1438876" time="0" location="/Users/vickery/.ivy2/cache/org.scalatest/scalatest_2.11/srcs/scalatest_2.11-2.2.4-sources.jar">
 						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/scalatest/scalatest_2.11/2.2.4/scalatest_2.11-2.2.4-sources.jar"/>
@@ -31,7 +31,7 @@
 			<revision name="1.0.2" status="release" pubdate="20140520041040" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scala-lang.org/" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="7">
 				<license name="BSD 3-clause" url="http://opensource.org/licenses/BSD-3-Clause"/>
 				<metadata-artifact status="no" details="" size="3011" time="0" location="/Users/vickery/.ivy2/cache/org.scala-lang.modules/scala-xml_2.11/ivy-1.0.2.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.11/1.0.2/scala-xml_2.11-1.0.2.pom"/>
-				<caller organisation="org.vickery" name="address-parser$sources_javadoc_2.11" conf="test, compile, runtime" rev="1.0.2" rev-constraint-default="1.0.2" rev-constraint-dynamic="1.0.2" callerrev="2.1"/>
+				<caller organisation="org.vickery" name="address-parser$sources_javadoc_2.11" conf="test, compile, runtime" rev="1.0.2" rev-constraint-default="1.0.2" rev-constraint-dynamic="1.0.2" callerrev="2.5"/>
 				<artifacts>
 					<artifact name="scala-xml_2.11" type="jar" ext="jar" status="no" details="" size="648678" time="0" location="/Users/vickery/.ivy2/cache/org.scala-lang.modules/scala-xml_2.11/jars/scala-xml_2.11-1.0.2.jar">
 						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.11/1.0.2/scala-xml_2.11-1.0.2.jar"/>
@@ -49,7 +49,7 @@
 			<revision name="2.11.2" status="release" pubdate="20140723023911" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scala-lang.org/" extra-info.apiURL="http://www.scala-lang.org/api/2.11.2/" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="6">
 				<license name="BSD 3-Clause" url="http://www.scala-lang.org/license.html"/>
 				<metadata-artifact status="no" details="" size="2825" time="0" location="/Users/vickery/.ivy2/cache/org.scala-lang/scala-reflect/ivy-2.11.2.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.11.2/scala-reflect-2.11.2.pom"/>
-				<caller organisation="org.vickery" name="address-parser$sources_javadoc_2.11" conf="test, compile, runtime" rev="2.11.2" rev-constraint-default="2.11.2" rev-constraint-dynamic="2.11.2" callerrev="2.1" extra-info.apiURL="http://www.scala-lang.org/api/2.11.2/"/>
+				<caller organisation="org.vickery" name="address-parser$sources_javadoc_2.11" conf="test, compile, runtime" rev="2.11.2" rev-constraint-default="2.11.2" rev-constraint-dynamic="2.11.2" callerrev="2.5" extra-info.apiURL="http://www.scala-lang.org/api/2.11.2/"/>
 				<artifacts>
 					<artifact name="scala-reflect" type="jar" ext="jar" status="no" details="" size="4391629" time="0" location="/Users/vickery/.ivy2/cache/org.scala-lang/scala-reflect/jars/scala-reflect-2.11.2.jar">
 						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.11.2/scala-reflect-2.11.2.jar"/>
@@ -67,7 +67,7 @@
 			<revision name="0.3.7" status="release" pubdate="20160307001242" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://github.com/lihaoyi/scala-parser" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="2">
 				<license name="MIT license" url="http://www.opensource.org/licenses/mit-license.php"/>
 				<metadata-artifact status="no" details="" size="3397" time="0" location="/Users/vickery/.ivy2/cache/com.lihaoyi/fastparse_2.11/ivy-0.3.7.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/com/lihaoyi/fastparse_2.11/0.3.7/fastparse_2.11-0.3.7.pom"/>
-				<caller organisation="org.vickery" name="address-parser$sources_javadoc_2.11" conf="test, compile, runtime" rev="0.3.7" rev-constraint-default="0.3.7" rev-constraint-dynamic="0.3.7" callerrev="2.1"/>
+				<caller organisation="org.vickery" name="address-parser$sources_javadoc_2.11" conf="test, compile, runtime" rev="0.3.7" rev-constraint-default="0.3.7" rev-constraint-dynamic="0.3.7" callerrev="2.5"/>
 				<artifacts>
 					<artifact name="fastparse_2.11" type="jar" ext="jar" status="no" details="" size="310833" time="0" location="/Users/vickery/.ivy2/cache/com.lihaoyi/fastparse_2.11/jars/fastparse_2.11-0.3.7.jar">
 						<origin-location is-local="false" location="https://repo1.maven.org/maven2/com/lihaoyi/fastparse_2.11/0.3.7/fastparse_2.11-0.3.7.jar"/>
@@ -85,7 +85,7 @@
 			<revision name="0.3.7" status="release" pubdate="20160307001151" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://github.com/lihaoyi/scala-parser" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="3">
 				<license name="MIT license" url="http://www.opensource.org/licenses/mit-license.php"/>
 				<metadata-artifact status="no" details="" size="3265" time="0" location="/Users/vickery/.ivy2/cache/com.lihaoyi/fastparse-utils_2.11/ivy-0.3.7.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/com/lihaoyi/fastparse-utils_2.11/0.3.7/fastparse-utils_2.11-0.3.7.pom"/>
-				<caller organisation="org.vickery" name="address-parser$sources_javadoc_2.11" conf="test, compile, runtime" rev="0.3.7" rev-constraint-default="0.3.7" rev-constraint-dynamic="0.3.7" callerrev="2.1"/>
+				<caller organisation="org.vickery" name="address-parser$sources_javadoc_2.11" conf="test, compile, runtime" rev="0.3.7" rev-constraint-default="0.3.7" rev-constraint-dynamic="0.3.7" callerrev="2.5"/>
 				<artifacts>
 					<artifact name="fastparse-utils_2.11" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="2752" time="0" location="/Users/vickery/.ivy2/cache/com.lihaoyi/fastparse-utils_2.11/srcs/fastparse-utils_2.11-0.3.7-sources.jar">
 						<origin-location is-local="false" location="https://repo1.maven.org/maven2/com/lihaoyi/fastparse-utils_2.11/0.3.7/fastparse-utils_2.11-0.3.7-sources.jar"/>
@@ -103,7 +103,7 @@
 			<revision name="0.1.1" status="release" pubdate="20160306232825" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://github.com/lihaoyi/sourcecode" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="4">
 				<license name="MIT license" url="http://www.opensource.org/licenses/mit-license.php"/>
 				<metadata-artifact status="no" details="" size="2840" time="0" location="/Users/vickery/.ivy2/cache/com.lihaoyi/sourcecode_2.11/ivy-0.1.1.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/com/lihaoyi/sourcecode_2.11/0.1.1/sourcecode_2.11-0.1.1.pom"/>
-				<caller organisation="org.vickery" name="address-parser$sources_javadoc_2.11" conf="test, compile, runtime" rev="0.1.1" rev-constraint-default="0.1.1" rev-constraint-dynamic="0.1.1" callerrev="2.1"/>
+				<caller organisation="org.vickery" name="address-parser$sources_javadoc_2.11" conf="test, compile, runtime" rev="0.1.1" rev-constraint-default="0.1.1" rev-constraint-dynamic="0.1.1" callerrev="2.5"/>
 				<artifacts>
 					<artifact name="sourcecode_2.11" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="457646" time="0" location="/Users/vickery/.ivy2/cache/com.lihaoyi/sourcecode_2.11/docs/sourcecode_2.11-0.1.1-javadoc.jar">
 						<origin-location is-local="false" location="https://repo1.maven.org/maven2/com/lihaoyi/sourcecode_2.11/0.1.1/sourcecode_2.11-0.1.1-javadoc.jar"/>
@@ -121,7 +121,7 @@
 			<revision name="1.0.4" status="release" pubdate="20150430100747" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scala-lang.org/" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="1">
 				<license name="BSD 3-clause" url="http://opensource.org/licenses/BSD-3-Clause"/>
 				<metadata-artifact status="no" details="" size="2803" time="0" location="/Users/vickery/.ivy2/cache/org.scala-lang.modules/scala-parser-combinators_2.11/ivy-1.0.4.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.4/scala-parser-combinators_2.11-1.0.4.pom"/>
-				<caller organisation="org.vickery" name="address-parser$sources_javadoc_2.11" conf="test, compile, runtime" rev="1.0.4" rev-constraint-default="1.0.4" rev-constraint-dynamic="1.0.4" callerrev="2.1"/>
+				<caller organisation="org.vickery" name="address-parser$sources_javadoc_2.11" conf="test, compile, runtime" rev="1.0.4" rev-constraint-default="1.0.4" rev-constraint-dynamic="1.0.4" callerrev="2.5"/>
 				<artifacts>
 					<artifact name="scala-parser-combinators_2.11" type="jar" ext="jar" status="no" details="" size="423753" time="0" location="/Users/vickery/.ivy2/cache/org.scala-lang.modules/scala-parser-combinators_2.11/jars/scala-parser-combinators_2.11-1.0.4.jar">
 						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.4/scala-parser-combinators_2.11-1.0.4.jar"/>
@@ -139,7 +139,7 @@
 			<revision name="2.11.7" status="release" pubdate="20150622161702" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scala-lang.org/" extra-info.apiURL="http://www.scala-lang.org/api/2.11.7/" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="0">
 				<license name="BSD 3-Clause" url="http://www.scala-lang.org/license.html"/>
 				<metadata-artifact status="no" details="" size="2653" time="0" location="/Users/vickery/.ivy2/cache/org.scala-lang/scala-library/ivy-2.11.7.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.7/scala-library-2.11.7.pom"/>
-				<caller organisation="org.vickery" name="address-parser$sources_javadoc_2.11" conf="test, compile, runtime" rev="2.11.7" rev-constraint-default="2.11.7" rev-constraint-dynamic="2.11.7" callerrev="2.1" extra-info.apiURL="http://www.scala-lang.org/api/2.11.7/"/>
+				<caller organisation="org.vickery" name="address-parser$sources_javadoc_2.11" conf="test, compile, runtime" rev="2.11.7" rev-constraint-default="2.11.7" rev-constraint-dynamic="2.11.7" callerrev="2.5" extra-info.apiURL="http://www.scala-lang.org/api/2.11.7/"/>
 				<artifacts>
 					<artifact name="scala-library" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="908307" time="0" location="/Users/vickery/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.11.7-sources.jar">
 						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.7/scala-library-2.11.7-sources.jar"/>

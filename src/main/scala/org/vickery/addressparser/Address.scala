@@ -73,8 +73,14 @@ case class Address(var streetNum: Option[String],
     else
       almost
   }
+
+  private def streetNameIsPreDirection = {
+    streetName.isDefined && (streetName.get.split("\\s+").find(s => directionIndexByName.contains(s.toLowerCase().trim) ||
+      directionIndexByName.values.toList.contains(s.toUpperCase.trim)).isDefined)
+  }
+
   def canonicalStreetType = {
-    if(streetName.isDefined && !(streetName.get.isEmpty) && streetType.isDefined && (streetName.get contains streetType.get))
+    if(streetName.isDefined && !(streetName.get.isEmpty) && streetType.isDefined && (streetName.get.split("\\s+") contains streetType.get))
       ""
     else {
       if(streetType.isDefined && streetType.get.equalsIgnoreCase("po box")) {
@@ -302,7 +308,7 @@ case class Address(var streetNum: Option[String],
     "PIKE" -> "PIKE", "PIKES" -> "PIKE", "PIKE" -> "PIKE",
     "PINE" -> "PNE", "PNE" -> "PNE",
     "PINES" -> "PNES", "PNES" -> "PNES", "PNES" -> "PNES",
-    "PL" -> "PL", "PL" -> "PL",
+    "PL" -> "PL", "PLACE" -> "PL",
     "PLAIN" -> "PLN", "PLN" -> "PLN", "PLN" -> "PLN",
     "PLAINS" -> "PLNS", "PLNS" -> "PLNS", "PLNS" -> "PLNS",
     "PLAZA" -> "PLZ", "PLZ" -> "PLZ", "PLZA" -> "PLZ", "PLZ" -> "PLZ",
