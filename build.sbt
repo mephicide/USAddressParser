@@ -1,7 +1,7 @@
 organization  := "org.vickery"
 name := "address-parser"
 
-version := "2.5"
+version := "2.10"
 
 scalaVersion := "2.11.7"
 

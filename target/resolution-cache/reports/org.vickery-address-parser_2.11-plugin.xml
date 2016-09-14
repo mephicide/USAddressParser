@@ -4,10 +4,10 @@
 	<info
 		organisation="org.vickery"
 		module="address-parser_2.11"
-		revision="2.5"
+		revision="2.10"
 		conf="plugin"
 		confs="compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, sources, docs, pom, scala-tool"
-		date="20160908164803"/>
+		date="20160914143449"/>
 	<dependencies>
 	</dependencies>
 </ivy-report>

@@ -24,9 +24,6 @@ class TestParser extends FlatSpec with Matchers
   val secondaryTypes = List("apt", "SUITE", "STE", "#")
   val secondaryNumbers = List("320", "B")
 
-  //TODO city state zip stuff if we need it
-  //val cityNames = List("citytown", "city town")
-
   "street-type-1" should "parse" in {
     completeParser.streetType.parse("st").isInstanceOf[Success[_]] should be (true)
     completeParser.streetType.parse("ALLEY").isInstanceOf[Success[_]] should be (true)
@@ -135,6 +132,20 @@ class TestParser extends FlatSpec with Matchers
   "123 north south main st." should "be parsed" in {
     val addressToParse = "123 north south main st."
     completeParser.parseWithKnownCityStateZip(addressToParse) should be (Some(new Address(Some("123"),
+      None,
+      Some("south main"),
+      Some("st"),
+      Some("north"),
+      None,
+      optCity,
+      optState,
+      optZip,
+      None)))
+  }
+
+  "123.5 north south main st." should "be parsed" in {
+    val addressToParse = "123.5 north south main st."
+    completeParser.parseWithKnownCityStateZip(addressToParse) should be (Some(new Address(Some("123.5"),
       None,
       Some("south main"),
       Some("st"),
@@ -508,6 +519,22 @@ class TestParser extends FlatSpec with Matchers
       None)))
   }
 
+  /*
+  TODO
+      "777 Avenue W" should "parse" in {
+    val addressToParse = "777 AVENUE W"
+    completeParser.parseWithKnownCityStateZip(addressToParse) should be (Some(new Address(Some("777"),
+      None,
+      Some("avenue w"),
+      Some("avenue"),
+      None,
+      None,
+      optCity,
+      optState,
+      optZip,
+      None)))
+  }*/
+
   "777 Brockton Ave" should "parse" in {
     val addressToParse = "777 Brockton ave"
     val newParser = new AddressParser(Some("Abingdon"), Some("MA"), Some("02531".toInt))
@@ -593,6 +620,24 @@ class TestParser extends FlatSpec with Matchers
     newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalStreetType should be ("Rd")
   }
 
+  "1301 New Jersey Ave NW" should "be parsed" in {
+    val addressToParse = "1301 New Jersey Ave NW"
+    val newParser = new AddressParser(Some("ABINGDON"), Some("MA"), None)
+    newParser.parseWithKnownCityStateZip(addressToParse) should be (Some(new Address(Some("1301"),
+      None,
+      Some("new jersey"),
+      Some("ave"),
+      None,
+      Some("nw"),
+      Some("ABINGDON"),
+      Some("MA"),
+      None,
+      None)))
+
+    newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalStreetType should be ("Ave")
+    newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalStreetName should be ("New Jersey")
+  }
+
   "4447 E STREET SE" should "be parsed" in {
     val addressToParse = "4447 E STREET SE"
     val newParser = new AddressParser(Some("ABINGDON"), Some("MA"), None)
@@ -633,6 +678,27 @@ class TestParser extends FlatSpec with Matchers
     newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalStreetName should be ("East")
   }
 
+  "5411 A EAST AVE" should "be parsed" in {
+    val addressToParse = "5411 A EAST AVE"
+    val newParser = new AddressParser(Some("ABINGDON"), Some("MA"), Some(12345), true)
+    newParser.parseWithKnownCityStateZip(addressToParse) should be (Some(new Address(Some("5411-a"),
+      None,
+      Some("east"),
+      Some("ave"),
+      None,
+      None,
+      Some("ABINGDON"),
+      Some("MA"),
+      Some(12345),
+      None)))
+
+    newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalStreetNumber should be ("5411-A")
+    newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalStreetType should be ("Ave")
+    newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalPreDirection should be ("")
+    newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalPostDirection should be ("")
+    newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalStreetName should be ("East")
+  }
+
   "727 HICKORY LOT RD" should "be parsed" in {
     val addressToParse = "727 HICKORY LOT RD"
     val newParser = new AddressParser(Some("ABINGDON"), Some("MA"), Some(12345), true)
@@ -649,6 +715,24 @@ class TestParser extends FlatSpec with Matchers
 
     newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalStreetType should be ("Rd")
     newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalStreetName should be ("Hickory Lot")
+  }
+
+  "4010 BROENING HWY" should "be parsed" in {
+    val addressToParse = "4010 BROENING HWY"
+    val newParser = new AddressParser(Some("ABINGDON"), Some("MA"), Some(12345), true)
+    newParser.parseWithKnownCityStateZip(addressToParse) should be (Some(new Address(Some("4010"),
+      None,
+      Some("broening"),
+      Some("hwy"),
+      None,
+      None,
+      Some("ABINGDON"),
+      Some("MA"),
+      Some(12345),
+      None)))
+
+    newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalStreetType should be ("Hwy")
+    newParser.parseWithKnownCityStateZip(addressToParse).get.canonicalStreetName should be ("Broening")
   }
 
   "Empty street contents" should "Not throw an exception" in {
@@ -690,7 +774,7 @@ class TestParser extends FlatSpec with Matchers
   "240.00000000 N Coast Hwy 101" should "parse" in {
     val addressToParse = "240.00000000 N Coast Hwy 101"
 
-    completeParser.parseWithKnownCityStateZip(addressToParse) should be (Some(new Address(Some("240"),
+     completeParser.parseWithKnownCityStateZip(addressToParse) should be (Some(new Address(Some("240"),
       None,
       Some("coast"),
       Some("hwy"),
@@ -758,24 +842,76 @@ class TestParser extends FlatSpec with Matchers
       Some("40"))))
   }
 
-
-
-
-
-
-   /* val addressToParse = streetNumbers(0) + " " + directions(0) + " " + streetNameTypes(0) + " " + streetTypes(0) + " 3900 " + directions(1) + " " + secondaryTypes(0) + " " + secondaryNumbers(0)
-
-    Console.println("Parsing " + addressToParse)
-    completeParser.parse(addressToParse
-    ) should be (new Address(Some(streetNumbers(0)),
-      Some(secondaryNumbers(0)),
-      Some(streetNameTypes(0)),
-      Some(streetTypes(0)),
-      Some(directions(0)),
-      Some(directions(0)),
+  "5032 East Coyotes Diagonal" should "parse" in {
+    val addressToParse = "5032 East Coyotes Diagonal"
+    completeParser.parseWithKnownCityStateZip(addressToParse) should be (Some(new Address(Some("5032"),
+      None,
+      Some("coyotes diagonal"),
+      None,
+      Some("east"),
+      None,
       optCity,
       optState,
       optZip,
-      Some("3900")))*/
+      None)))
+  }
+
+  "5032 Coyotes Diagonal West" should "parse" in {
+    val addressToParse = "5032 Coyotes Diagonal West"
+    completeParser.parseWithKnownCityStateZip(addressToParse) should be (Some(new Address(Some("5032"),
+      None,
+      Some("coyotes diagonal"),
+      None,
+      None,
+      Some("west"),
+      optCity,
+      optState,
+      optZip,
+      None)))
+  }
+
+  "5032 East Coyotes Diagonal West" should "parse" in {
+    val addressToParse = "5032 East Coyotes Diagonal West"
+    completeParser.parseWithKnownCityStateZip(addressToParse) should be (Some(new Address(Some("5032"),
+      None,
+      Some("coyotes diagonal"),
+      None,
+      Some("east"),
+      Some("west"),
+      optCity,
+      optState,
+      optZip,
+      None)))
+  }
+
+  "123 St Louis St" should "parse" in {
+    val addressToParse = "123 St Louis St"
+    completeParser.parseWithKnownCityStateZip(addressToParse) should be (Some(new Address(Some("123"),
+      None,
+      Some("st louis"),
+      Some("st"),
+      None,
+      None,
+      optCity,
+      optState,
+      optZip,
+      None)))
+  }
+
+
+  /* val addressToParse = streetNumbers(0) + " " + directions(0) + " " + streetNameTypes(0) + " " + streetTypes(0) + " 3900 " + directions(1) + " " + secondaryTypes(0) + " " + secondaryNumbers(0)
+
+   Console.println("Parsing " + addressToParse)
+   completeParser.parse(addressToParse
+   ) should be (new Address(Some(streetNumbers(0)),
+     Some(secondaryNumbers(0)),
+     Some(streetNameTypes(0)),
+     Some(streetTypes(0)),
+     Some(directions(0)),
+     Some(directions(0)),
+     optCity,
+     optState,
+     optZip,
+     Some("3900")))*/
 
 }

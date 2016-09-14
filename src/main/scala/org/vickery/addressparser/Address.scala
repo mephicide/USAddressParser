@@ -42,7 +42,7 @@ case class Address(var streetNum: Option[String],
     "State(" + state.getOrElse("null") + ") " +
     "Zip(" + zip.getOrElse("null") + ")"
 
-  def canonicalStreetNumber = streetNum.get
+  def canonicalStreetNumber = streetNum.get.trim.toUpperCase()
 
   def canonicalDirection(dir: Option[String]) = {
     val key = dir.getOrElse("").replaceAll("\\s", "").toLowerCase
@@ -80,7 +80,7 @@ case class Address(var streetNum: Option[String],
   }
 
   def canonicalStreetType = {
-    if(streetName.isDefined && !(streetName.get.isEmpty) && streetType.isDefined && (streetName.get.split("\\s+") contains streetType.get))
+    if(streetName.isDefined && !(streetName.get.isEmpty) && streetType.isDefined && (streetTypeMapping.get(streetName.get.toUpperCase()).getOrElse("") equals streetType.get.toUpperCase))
       ""
     else {
       if(streetType.isDefined && streetType.get.equalsIgnoreCase("po box")) {
@@ -90,7 +90,6 @@ case class Address(var streetNum: Option[String],
         streetTypeMapping.getOrElse(streetType.getOrElse("").toUpperCase, "").toLowerCase.capitalize
       }
     }
-
   }
 
   def masterAddressName = {

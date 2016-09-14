@@ -15,7 +15,7 @@ class AddressParser(var city: Option[String], var state: Option[String], var zip
   import fastparse.all._
 
   //override val skipWhitespace = false
-  val whiteSpace = CharIn(List('\t', '\n', ' ')).rep
+  val whiteSpace = CharIn(List('\t', '\n', ' ')).rep(1)
 
   val fractionalNumber: Parser[String] = P(individualNumber ~ "/" ~ individualNumber) map {case (s1, s2) => s1 + "/" + s2}
 
@@ -68,6 +68,10 @@ class AddressParser(var city: Option[String], var state: Option[String], var zip
   val secondary: Parser[String] = P(StringInIgnoreCase("Apartment","APT","Basement","BSMT","Building","BLDG","Department","DEPT","Floor","FL","Front","FRNT","Hanger","HNGR","Key","KEY","Lobby","LBBY","Lot","LOT","Lower","LOWR","Office","OFC","Penthouse","PH","Pier","PIER","Rear","REAR","Room","RM","Side","SIDE","Slip","SLIP","Space","SPC","Stop","STOP","Suite","STE","Trailer","TRLR","Unit","UNIT","Upper","UPPR","Box").! | P("#" ~ CharIn('a'to'z','A'to'Z','0'to'9', List('-')).rep(1)).! | P("#").!)
 
   val highwayNumber: Parser[String] = P(standaloneStreetNumber | CharIn('a'to'z', 'A'to'Z').!)
+
+  val highwayInfoComplete: Parser[String] = P(highwayNumber.! ~ whiteSpace ~ streetType.!) map {
+    case (hn, st) => hn
+  }
 
   def correctForNamelessStreet(addressTokens: List[String], lastSuccessfulInd: Integer, build: Address): Option[String] = {
     val finalInd = List.range(0,addressTokens.length).foldLeft(addressTokens.length)((cum, cur) => {
@@ -160,8 +164,8 @@ class AddressParser(var city: Option[String], var state: Option[String], var zip
     else if(streetNameSlice.isEmpty && (currentBuild.internalNumber.isDefined || currentBuild.postDirection.isDefined || ignoreEverythingPriorToPostDirMode)) {
       val newStName = correctForNamelessStreet(addressTokens, lastSuccessfulInd, currentBuild)
       if(newStName.isDefined){
-        if(newStName.get.isEmpty && currentBuild.preDirection.isDefined || successful(streetType.parse(newStName.get.toUpperCase), newStName.get))
-          result = switchPredirectionAndStreetName(currentBuild)
+        if(newStName.get.isEmpty && currentBuild.preDirection.isDefined || currentBuild.postDirection.isDefined || successful(streetType.parse(newStName.get.toUpperCase), newStName.get))
+            result = switchPredirectionAndStreetName(currentBuild)
         else
           result = Some(currentBuild.withStreetName(newStName.get.trim))
       }
@@ -171,7 +175,15 @@ class AddressParser(var city: Option[String], var state: Option[String], var zip
       result = None
     }
     else {
-      result = Some(currentBuild.withStreetName(streetNameSlice.mkString(" ").trim))
+      if(streetNameSlice(0).matches("[a-zA-Z]") && streetNameSlice.length > 1) {
+        //this might be a 123 A Main St. case ...
+        val newStreetNum = s"${currentBuild.streetNum.get}-${streetNameSlice(0)}"
+        val newStreetName = streetNameSlice.slice(1, streetNameSlice.length).mkString(" ").trim
+        result = Some(currentBuild.withStreetNumber(newStreetNum).withStreetName(newStreetName))
+      }
+      else {
+        result = Some(currentBuild.withStreetName(streetNameSlice.mkString(" ").trim))
+      }
     }
 
     return applyFinalCorrections(result)
@@ -292,6 +304,10 @@ class AddressParser(var city: Option[String], var state: Option[String], var zip
     }
   }
 
+  def createNewAddress = new Address().withCity(city.getOrElse("")).withState(state.getOrElse("")).withZip(zip.getOrElse(-1))
+
+  private def cleanAddressNum(s: String): String = if(s.matches("[0-9]+[.][00]+")) s.substring(0, s.indexOf(".")) else s
+
   def parseWithKnownCityStateZip(str: String) = {
     if(str.trim.isEmpty)
       None
@@ -302,7 +318,7 @@ class AddressParser(var city: Option[String], var state: Option[String], var zip
         None
       }
       else {
-        val startingAddr = new Address().withCity(city.getOrElse("")).withState(state.getOrElse("")).withZip(zip.getOrElse(-1))
+        val startingAddr = createNewAddress
 
         val poBox = parsePOBox(splitList.toList, startingAddr)
         if(poBox.isDefined)
@@ -310,17 +326,18 @@ class AddressParser(var city: Option[String], var state: Option[String], var zip
           Some(poBox.get)
         }
         else {
-          splitList = Address.stateReplace(str).split("""[\s,.]""").filter(x => !x.isEmpty && !(x.trim.replaceAll("0+", "").isEmpty))
+          splitList = str.toLowerCase.split("""[\s,]""").filter(x => !x.isEmpty && !(x.trim.replaceAll("0+", "").isEmpty))
+          val splitListNew = cleanAddressNum(splitList(0)):: splitList.slice(1, splitList.length).map(_.replaceAll("[.]", "")).toList
           val reverseResult = if(ignoreEverythingPriorToPostDirMode)
-                                  parseWithFSM(splitList.reverse.toList, startingAddr, 0, -1, LookingForPostDirectional)
+                                  parseWithFSM(splitListNew.reverse, startingAddr, 0, -1, LookingForPostDirectional)
                                 else
-                                  parseWithFSM(splitList.reverse.toList, startingAddr, 0, -1, LookingForCity)
+                                  parseWithFSM(splitListNew.reverse, startingAddr, 0, -1, LookingForCity)
 
           if (reverseResult.isDefined) {
-            parseForwardWithFSM(splitList.toList, 0, -1, reverseResult.get._1, (splitList.length - (reverseResult.get._2 + 1)), START)
+            parseForwardWithFSM(splitListNew, 0, -1, reverseResult.get._1, (splitList.length - (reverseResult.get._2 + 1)), START)
           }
           else
-            parseForwardWithFSM(splitList.toList, 0, -1, startingAddr, splitList.length, START)
+            parseForwardWithFSM(splitList.toList, 0, -1, createNewAddress, splitList.length, START)
         }
       }
     }
@@ -522,7 +539,7 @@ class AddressParser(var city: Option[String], var state: Option[String], var zip
         case LookingForPostDirectional => {
           val currentTok = addressTokens(currentInd)
           val parsed = directionality.parse(currentTok)
-          if(successful(parsed, currentTok)) {
+          if(successful(parsed, currentTok) && currentInd < addressTokens.length-2) { //can't be a post dir if there isn't at least a number and a name as well
             val dirPortion = getTwoTokenItem(reverse = false, addressTokens, currentInd,  singleDirectional, singleDirectional, directionality, directionValidator)
             if(dirPortion.isDefined) {
               val nextBuild = currentBuild.withPostDirection(dirPortion.get._1)
@@ -537,7 +554,7 @@ class AddressParser(var city: Option[String], var state: Option[String], var zip
         }
         case LookingForHighwayNumber => {
           val currentTok = addressTokens(currentInd)
-          val parsedHighwayNumber = getTwoTokenItem(false, addressTokens, currentInd,highwayNumber, streetType, highwayNumber~streetType map { case (first, second) => first}, noOpValidator)
+          val parsedHighwayNumber = getTwoTokenItem(false, addressTokens, currentInd,highwayNumber, streetType, highwayNumber.! ~ whiteSpace ~ streetType.! map { case (first, second) => first}, noOpValidator)
          // val parsedHighwayNumber = parseAll(standaloneStreetNumber|"""[a-zA-Z]""".r, currentTok)
           if (parsedHighwayNumber.isDefined) {
             val splits = parsedHighwayNumber.get._1.split("\\s+")
@@ -563,7 +580,7 @@ class AddressParser(var city: Option[String], var state: Option[String], var zip
             Some((nextBuild, currentInd))
           }
           else {
-            if(ignoreEverythingPriorToPostDirMode)
+            if(ignoreEverythingPriorToPostDirMode && !currentBuild.postDirection.isDefined)
               parseWithFSM(addressTokens, currentBuild, currentInd+1, lastSuccessfulInd, LookingForPostDirectional)
             else
               Some((currentBuild, lastSuccessfulInd))
